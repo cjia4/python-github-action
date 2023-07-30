@@ -1,7 +1,12 @@
 import logging
 import logging.handlers
 import os
+import requests
+import json
+import time
+#https://open.dingtalk.com/document/orgapp/types-of-messages-sent-by-robots
 
+import datetime
 import requests
 
 logger = logging.getLogger(__name__)
@@ -17,18 +22,37 @@ logger_file_handler.setFormatter(formatter)
 logger.addHandler(logger_file_handler)
 
 try:
-    SOME_SECRET = os.environ["SOME_SECRET"]
+    DINGDING_WEBHOOK = os.environ["DINGDING"]
 except KeyError:
-    SOME_SECRET = "Token not available!"
-    #logger.info("Token not available!")
+    DINGDING_WEBHOOK = "Token not available!"
+    logger.info("Token not available!")
     #raise
 
 
 if __name__ == "__main__":
-    logger.info(f"Token value: {SOME_SECRET}")
+    logger.info(f"Token value: {DINGDING_WEBHOOK}")
 
-    r = requests.get('https://weather.talkpython.fm/api/weather/?city=Berlin&country=DE')
-    if r.status_code == 200:
-        data = r.json()
-        temperature = data["forecast"]["temp"]
-        logger.info(f'Weather in Berlin: {temperature}')
+    contents = "嘟嘟:这是来自github action的消息"
+
+    #print(ticks_1)
+    # 更改为自己的钉钉机器人
+    baseUrl = DINGDING_WEBHOOK
+    now = str(datetime.datetime.now())
+    # please set charset= utf-8
+    HEADERS = {
+        "Content-Type": "application/json ;charset=utf-8 "
+    }
+    # 这里的message是你想要推送的文字消息
+    message = "时间：" + now + "\n" + contents
+    stringBody = {
+        "msgtype": "text",
+        "text": {"content": message},
+        "at": {
+            "atMobiles": [""],
+            "isAtAll": "false"  # @所有人 时为true，上面的atMobiles就失效了
+        }
+    }
+    MessageBody = json.dumps(stringBody)
+    result = requests.post(url=baseUrl, data=MessageBody, headers=HEADERS)
+    print(result.text)
+    
