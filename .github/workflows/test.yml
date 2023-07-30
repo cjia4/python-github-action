@@ -4,7 +4,9 @@ on:
   # 当对分支main进行push操作的时候，这个工作流就被触发了
   push:
     branches: [ main ]
-     
+  schedule:
+      # Runs everyday at 8:00 AM
+      - cron: "0 8 * * *"     
 
 jobs:
   build:
