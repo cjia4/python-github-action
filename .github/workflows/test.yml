@@ -1,0 +1,14 @@
+name: cron test
+
+on:
+  schedule:
+    - cron: '5 * * * *' 
+     
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        run: |
+            echo abcd
